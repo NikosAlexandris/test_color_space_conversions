@@ -123,8 +123,56 @@ for COLOR in r g b; do
     echo -e '\n'
 done
 
+
+# Test roundtrip for all bitnesses from 6 to 16
+for BAND in lsat7_2002_10 lsat7_2002_20 lsat7_2002_30 ;do
+    echo "${BAND}:"
+    for BITS in $(seq 6 16) ;do
+        TO=$(echo 2^${BITS}-1 |bc)
+        MIN=$(r.info -r "$BAND" |grep ^min=)
+        MAX=$(r.info -r "$BAND" |grep ^max=)
+        r.rescale --o \
+            $BAND \
+            from=${MIN#*=},${MAX#*=} \
+            output=${BAND}_${BITS} \
+            to=${MIN#*=},${TO}
+    done 
+    echo 
+done
+
+for BITS in $(seq 6 16) ;do
+    i.rgb.his --o --q \
+        r=lsat7_2002_30_${BITS} \
+        g=lsat7_2002_20_${BITS} \
+        bl=lsat7_2002_10_${BITS} \
+        h=h${BITS} \
+        i=i${BITS} \
+        s=s${BITS} \
+        bits=$BITS
+done
+
+for BITS in $(seq 6 16) ;do
+    i.his.rgb --o --q \
+    h=h${BITS} \
+    i=i${BITS} \
+    s=s${BITS} \
+    r=r${BITS} \
+    g=g${BITS} \
+    bl=b${BITS} \
+    bits=$BITS
+done
+
+for BITS in $(seq 6 16) ;do
+    echo $BITS
+    for VALUE in lsat7_2002_30_ lsat7_2002_20_ lsat7_2002_10_ h i s r g b ;do
+        echo $(echo "${VALUE}${BITS}:" && r.info -r ${VALUE}${BITS})
+    done
+    echo
+done
+
+
 # remove test maps
 print "Removing test maps"
-g.remove raster pattern=[rgb]* -f
-g.remove raster pattern=[his]* -f
-g.remove raster pattern=lsat7_2002_?0_16 -f
+g.remove --q raster pattern=[rgb]* -f
+g.remove --q raster pattern=[his]* -f
+g.remove --q raster pattern=lsat7_2002_?0_* -f  # Best to use temporary map names!

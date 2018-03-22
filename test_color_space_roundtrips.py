@@ -95,6 +95,25 @@ class TestRGB2HIS(TestCase):
     # TODO: replace by unified handing of maps
     to_remove = []
 
+    def image_name(self, name, prefix, bitness):
+        """
+        Return a meaningful name for any map by adding the bitness as a suffix.
+        To Do -- The idea is to avoid duplication of the following map names:
+
+        red_input = red_image + '_' + bits
+        green_input = green_image + '_' + bits
+        blue_input = blue_image + '_' + bits
+
+        hue = hue_prefix + '_' + bits
+        intensity = intensity_prefix + '_' + bits
+        saturation = saturation_prefix + '_' + bits
+
+        red_output = red_prefix + '_' + bits
+        green_output = green_prefix + '_' + bits
+        blue_output = blue_prefix + '_' + bits
+        """
+        return name + '_' + bits
+
     @classmethod
     def setUpClass(cls):
         """
@@ -315,7 +334,6 @@ class TestRGB2HIS(TestCase):
 
                 # inform
 
-                # for row in red_input_line, red_output_line, green_input_line, green_output_line, blue_input_line, blue_output_line:
                 for row in red_input_line, green_input_line, blue_input_line, hue_line, intensity_line, saturation_line, red_output_line, green_output_line, blue_output_line:
                     print("{: >20} {: >25} {: >20}".format(*row))
 

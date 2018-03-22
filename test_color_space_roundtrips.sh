@@ -6,6 +6,12 @@
 #
 #         USAGE: sh test_color_space_roundtrips.sh 6 16 $(g.list raster pattern=lsat7_2002_[457]0 sep=space)
 #
+#                1st and 2nd arguments are user defined minimum and
+#                maximum bitnesses to test for.
+#
+#                Arguments 3, 4 and 5 are images, supposedly used as components
+#                for an RGB composite image.
+#
 #   DESCRIPTION: Test color space conversion modules for various bitnesses
 #
 #  REQUIREMENTS: Modules `i.rgb.his` and `i.his.rgb` with support for `bits=`

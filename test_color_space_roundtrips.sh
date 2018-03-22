@@ -74,13 +74,13 @@ for BITS in $(seq $MINIMUM_BITNESS  $MAXIMUM_BITNESS) ;do
         bits=$BITS
 
     i.his.rgb --o --q \
-    h=h${BITS} \
-    i=i${BITS} \
-    s=s${BITS} \
-    r=r${BITS} \
-    g=g${BITS} \
-    bl=b${BITS} \
-    bits=$BITS
+        h=h${BITS} \
+        i=i${BITS} \
+        s=s${BITS} \
+        r=r${BITS} \
+        g=g${BITS} \
+        bl=b${BITS} \
+        bits=$BITS
 
     for VALUE in $RGB_IMAGE_PREFIXES h i s r g b ;do
         echo $(echo "${VALUE}${BITS}:" && r.info -r ${VALUE}${BITS})

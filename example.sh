@@ -3,11 +3,11 @@
 #===============================================================================
 #
 #          FILE: example.sh
-# 
-#         USAGE: ./example.sh 
-# 
-#   DESCRIPTION: 
-# 
+#
+#         USAGE: ./example.sh
+#
+#   DESCRIPTION:
+#
 #       OPTIONS: ---
 #  REQUIREMENTS: ---
 #          BUGS: ---
@@ -18,7 +18,7 @@
 #                <https://lists.osgeo.org/pipermail/grass-dev/2013-November/066342.html>
 #
 #        AUTHOR: Nikos Alexandris (), nik@nikosalexandris.net
-#  ORGANIZATION: 
+#  ORGANIZATION:
 #       CREATED: 03/22/2018 12:53
 #      REVISION:  ---
 #===============================================================================
@@ -28,34 +28,46 @@ set -o nounset                              # Treat unset variables as an error
 # There is some "loss" or "smoothing" after the roundtrip. Note, for red the
 # minimum is now `0.99` and not `1`.
 
-# Test roundtrip for all bitnesses from 6 to 16
-for BAND in lsat7_2002_10 lsat7_2002_20 lsat7_2002_30 ;do
-    echo "${BAND}:"
-    for BITS in $(seq 6 16) ;do
+MINIMUM_BITNESS=$1
+MAXIMUM_BITNESS=$2
+BLUE_IMAGE=$3
+GREEN_IMAGE=$4
+RED_IMAGE=$5
+RGB_IMAGES="$RED_IMAGE $GREEN_IMAGE $BLUE_IMAGE"
+BLUE_IMAGE_PREFIX="${BLUE_IMAGE}_"
+GREEN_IMAGE_PREFIX="${GREEN_IMAGE}_"
+RED_IMAGE_PREFIX="${RED_IMAGE}_"
+RGB_IMAGE_PREFIXES="$RED_IMAGE_PREFIX $GREEN_IMAGE_PREFIX $BLUE_IMAGE_PREFIX"
+
+# Test roundtrip for all bitnesses from $MINIMUM_BITNESS to $MAXIMUM_BITNESS
+for IMAGE in $RGB_IMAGES ;do
+    echo "${IMAGE}:"
+    for BITS in $(seq $MINIMUM_BITNESS  $MAXIMUM_BITNESS) ;do
         TO=$(echo 2^${BITS}-1 |bc)
-        MIN=$(r.info -r "$BAND" |grep ^min=)
-        MAX=$(r.info -r "$BAND" |grep ^max=)
+        MIN=$(r.info -r "$IMAGE" |grep ^min=)
+        MAX=$(r.info -r "$IMAGE" |grep ^max=)
         r.rescale --o \
-            $BAND \
+            $IMAGE \
             from=${MIN#*=},${MAX#*=} \
-            output=${BAND}_${BITS} \
+            output=${IMAGE}_${BITS} \
             to=${MIN#*=},${TO}
-    done 
-    echo 
+    done
+    echo
 done
 
-for BITS in $(seq 6 16) ;do
+for BITS in $(seq $MINIMUM_BITNESS  $MAXIMUM_BITNESS) ;do
+
+    echo $BITS
+
     i.rgb.his --o --q \
-        r=lsat7_2002_30_${BITS} \
-        g=lsat7_2002_20_${BITS} \
-        bl=lsat7_2002_10_${BITS} \
+        r="${RED_IMAGE_PREFIX}${BITS}" \
+        g="${GREEN_IMAGE_PREFIX}${BITS}" \
+        bl="${BLUE_IMAGE_PREFIX}${BITS}" \
         h=h${BITS} \
         i=i${BITS} \
         s=s${BITS} \
         bits=$BITS
-done
 
-for BITS in $(seq 6 16) ;do
     i.his.rgb --o --q \
     h=h${BITS} \
     i=i${BITS} \
@@ -64,16 +76,12 @@ for BITS in $(seq 6 16) ;do
     g=g${BITS} \
     bl=b${BITS} \
     bits=$BITS
-done
 
-for BITS in $(seq 6 16) ;do
-    echo $BITS
-    for VALUE in lsat7_2002_30_ lsat7_2002_20_ lsat7_2002_10_ h i s r g b ;do
+    for VALUE in $RGB_IMAGE_PREFIXES h i s r g b ;do
         echo $(echo "${VALUE}${BITS}:" && r.info -r ${VALUE}${BITS})
     done
     echo
 done
-
 
 # remove test maps
 echo "Removing test maps"

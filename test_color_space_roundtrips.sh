@@ -2,25 +2,24 @@
 
 #===============================================================================
 #
-#          FILE: example.sh
+#          FILE: test_color_space_roundtrips.sh
 #
-#         USAGE: ./example.sh
+#         USAGE: sh test_color_space_roundtrips.sh 6 16 $(g.list raster pattern=lsat7_2002_[457]0 sep=space)
 #
-#   DESCRIPTION:
+#   DESCRIPTION: Test color space conversion modules for various bitnesses
 #
-#       OPTIONS: ---
-#  REQUIREMENTS: ---
-#          BUGS: ---
-#         NOTES:
-#                On using i.pansharpen: it is impossible to use it with the
+#  REQUIREMENTS: Modules `i.rgb.his` and `i.his.rgb` with support for `bits=`
+#                Tested in: LOCATION_NAME=nc_spm_08_grass7, MAPSET=LE70160352000091EDC00
+#
+#         NOTES: Will break `i.pansharpen`. It is impossible to use it with the
 #                "new" i.rgb.his and i.his.rgb modules. `i.pansharpen` assumes
 #                that images have 256 integer grey values, see author's comment:
 #                <https://lists.osgeo.org/pipermail/grass-dev/2013-November/066342.html>
 #
-#        AUTHOR: Nikos Alexandris (), nik@nikosalexandris.net
+#        AUTHOR: Nikos Alexandris
 #  ORGANIZATION:
-#       CREATED: 03/22/2018 12:53
-#      REVISION:  ---
+#       CREATED: 12/09/2016 07:00
+#      REVISION: 03/22/2018 12:53
 #===============================================================================
 
 set -o nounset                              # Treat unset variables as an error

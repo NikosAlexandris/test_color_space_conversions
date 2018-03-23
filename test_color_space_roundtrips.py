@@ -3,8 +3,10 @@
 
 """
 Name       Tests on RGB to HIS color space comversion
-Purpose    Test if NULL compression preserves raster data
-Source     <>
+Purpose    Test for no or minimal difference between the input the and output
+RGB images after a color space roundtrip from RGB to HIS and back to RGB
+
+Source     <https://trac.osgeo.org/grass/ticket/774>
 
 License    (C) 2018 by the GRASS Development Team
            This program is free software under the GNU General Public License
@@ -14,6 +16,7 @@ License    (C) 2018 by the GRASS Development Team
 """
 
 """Libraries"""
+
 from grass.gunittest.case import TestCase
 from grass.gunittest.gmodules import SimpleModule
 import grass.script as g
@@ -21,15 +24,18 @@ import grass.script as g
 """Globals"""
 
 # PRECISION=[0.1, 0.01, 0.001, 0.0001, 0.00001, 0.000001, 0.0000001]
-# PRECISION=[0.1, 0.01, 0.001]  # 0.001 will fail for >= 15-bits
-PRECISION=[0.1, 0.01, 0.001]
+PRECISION=[0.1, 0.01, 0.001]  # 0.001 will fail for >= 15-bits
 
-BITNESSES = [bits for bits in range(6,17)]
-# BITNESSES = [bits for bits in range(16,17)]
+
+#BITNESSES = [bits for bits in range(2,17)]
+BITNESSES = [bits for bits in range(6,17)]  # for bitness < 2, r.rescale flaw?
 
 IMAGES = ['lsat7_2002_10', 'lsat7_2002_20', 'lsat7_2002_30']
 
 RGB=[255,0,0]  # to use for "random" r, g, b triplet generation
+
+# Create in-test synthetic images?
+
 RED_ASCII="""north:                   2
 south:                   0
 east:                    2
@@ -81,8 +87,6 @@ blue_prefix = 'blue'
 hue_prefix = 'hue'
 intensity_prefix = 'intensity'
 saturation_prefix = 'saturation'
-
-"""Helper functions"""
 
 """Test Case Class"""
 
